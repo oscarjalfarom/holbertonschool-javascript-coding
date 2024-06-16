@@ -1,17 +1,24 @@
 #!/usr/bin/node
 
-/* eslint-disable */
-
 const request = require('request');
+const starWarsUri = process.argv[2];
+let times = 0;
 
-const api = `${process.argv[2]}`;
+request(starWarsUri, function (_err, _res, body) {
+  body = JSON.parse(body).results;
 
-request(api, (err, res, body) => {
-  if (err) throw err;
-  const data = JSON.parse(body).results;
-  const char = [];
-  for (const x in data) {
-    char.push(...data[x]['characters'].filter((str) => str.includes('/18/')));
+  for (let i = 0; i < body.length; ++i) {
+    const characters = body[i].characters;
+
+    for (let j = 0; j < characters.length; ++j) {
+      const character = characters[j];
+      const characterId = character.split('/')[5];
+
+      if (characterId === '18') {
+        times += 1;
+      }
+    }
   }
-  console.log(char.length);
+
+  console.log(times);
 });

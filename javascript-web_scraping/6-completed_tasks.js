@@ -1,26 +1,24 @@
 #!/usr/bin/node
 
 const request = require('request');
+const args = process.argv;
+const userCountDict = {}; // Object to store user IDs and counts
 
-const apiUrl = process.argv[2];
-
-request(apiUrl, function (error, response, body) {
+request(args[2], (error, response, body) => {
+  // Printing the error if occurred
   if (error) {
-    console.error('Error:', error);
+    console.log(error);
   } else {
-    const tasks = JSON.parse(body);
-    const completedTasksByUser = {};
-
-    tasks.forEach(function (task) {
-      if (task.completed) {
-        if (completedTasksByUser[task.userId]) {
-          completedTasksByUser[task.userId]++;
-        } else {
-          completedTasksByUser[task.userId] = 1;
-        }
+    const data = JSON.parse(body);
+    for (let i = 0; i < data.length; i++) {
+      const currentUser = data[i].userId;
+      if (!userCountDict[currentUser] && data[i].completed === true) {
+        userCountDict[currentUser] = 0;
       }
-    });
-
-    console.log(completedTasksByUser);
+      if (data[i].completed === true) {
+        userCountDict[currentUser]++;
+      }
+    }
   }
+  console.log(userCountDict);
 });

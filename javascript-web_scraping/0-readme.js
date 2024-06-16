@@ -1,13 +1,17 @@
 #!/usr/bin/node
-
 const fs = require('fs');
 
-const filePath = process.argv[2];
+const args = process.argv;
 
-fs.readFile(filePath, 'utf-8', (err, data) => {
-  if (err) {
-    console.error(err);
-  } else {
+if (args.length !== 3) {
+  console.error('Expected exactly one argument!');
+  process.exit(1);
+} else {
+  // Use fs.readFile() method to read the file
+  fs.readFile(args[2], 'utf8', function (err, data) {
+    if (err) {
+      console.error(err);
+    }
     console.log(data);
-  }
-});
+  });
+}
