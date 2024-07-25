@@ -1,24 +1,19 @@
 #!/usr/bin/node
 
 const request = require('request');
-const args = process.argv;
-const userCountDict = {}; // Object to store user IDs and counts
-
-request(args[2], (error, response, body) => {
-  // Printing the error if occurred
-  if (error) {
-    console.log(error);
-  } else {
-    const data = JSON.parse(body);
-    for (let i = 0; i < data.length; i++) {
-      const currentUser = data[i].userId;
-      if (!userCountDict[currentUser] && data[i].completed === true) {
-        userCountDict[currentUser] = 0;
-      }
-      if (data[i].completed === true) {
-        userCountDict[currentUser]++;
+const url = process.argv[2];
+request.get(url, (error, response, body) => {
+  if (error) console.log(error);
+  const data = JSON.parse(body);
+  const todoList = {};
+  data.forEach(todo => {
+    if (todo.completed) {
+      if (todoList[todo.userId]) {
+        todoList[todo.userId]++;
+      } else {
+        todoList[todo.userId] = 1;
       }
     }
-  }
-  console.log(userCountDict);
+  });
+  console.log(todoList);
 });
